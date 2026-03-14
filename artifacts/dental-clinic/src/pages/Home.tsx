@@ -125,6 +125,61 @@ export default function Home() {
                   <span className="text-sm font-medium">DSD</span>
                 </div>
               </div>
+
+              {/* Google Maps Section */}
+              <div className="mt-12 max-w-4xl mx-auto">
+                <h3 className="text-white text-xl font-semibold mb-4 text-center">
+                  {lang === "fr"
+                    ? "📍 Nous trouver"
+                    : lang === "en"
+                      ? "📍 Find us"
+                      : "📍 موقعنا"}
+                </h3>
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.6!2d-7.6290118!3d33.5999254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7d28c0cb0d30f%3A0xd16d850db03fd491!2sCENTRE%20DENTAIRE%20SENHAJI!5e0!3m2!1sfr!2sma!4v1710000000000!5m2!1sfr!2sma"
+                    width="100%"
+                    height="280"
+                    style={{ border: 0, display: "block" }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Centre Dentaire Senhaji"
+                  />
+                  <div className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-start">
+                    <div>
+                      <p className="text-gray-700 font-medium">
+                        🏢 Résidence AHL ALFADELA, Angle Bd Goulmima, 1er étage
+                        N°2
+                      </p>
+                      <p className="text-gray-500 text-sm mt-1">
+                        🕐{" "}
+                        {lang === "fr"
+                          ? "Lun-Ven: 9h-19h | Sam: 9h-14h"
+                          : lang === "en"
+                            ? "Mon-Fri: 9am-7pm | Sat: 9am-2pm"
+                            : "الإثنين-الجمعة: 9h-19h | السبت: 9h-14h"}
+                      </p>
+                      <p className="text-gray-500 text-sm">
+                        📞 +212 707 15 15 14
+                      </p>
+                    </div>
+                    <a
+                      href="https://www.google.com/maps/place/CENTRE+DENTAIRE+SENHAJI/@33.5999254,-7.6290118,17z"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 
+                                 rounded-lg text-sm font-medium whitespace-nowrap transition-colors"
+                    >
+                      {lang === "fr"
+                        ? "🗺️ Ouvrir dans Maps"
+                        : lang === "en"
+                          ? "🗺️ Open in Maps"
+                          : "🗺️ فتح في Maps"}
+                    </a>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>

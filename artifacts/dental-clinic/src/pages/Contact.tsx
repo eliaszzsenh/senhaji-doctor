@@ -217,6 +217,32 @@ export default function Contact() {
                     <MessageCircle className="w-5 h-5" />
                   </a>
                 </div>
+
+                {/* Google Maps */}
+                <div className="mt-8 rounded-2xl overflow-hidden shadow-lg">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.6!2d-7.6290118!3d33.5999254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7d28c0cb0d30f%3A0xd16d850db03fd491!2sCENTRE%20DENTAIRE%20SENHAJI!5e0!3m2!1sfr!2sma!4v1710000000000!5m2!1sfr!2sma"
+                    width="100%"
+                    height="300"
+                    style={{ border: 0, display: "block" }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Centre Dentaire Senhaji - Contact"
+                  />
+                </div>
+                <a
+                  href="https://www.google.com/maps/place/CENTRE+DENTAIRE+SENHAJI/@33.5999254,-7.6290118,17z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-3 text-blue-600 
+                             hover:text-blue-800 font-medium transition-colors"
+                >
+                  🗺️{" "}
+                  {t.contact.location === "Contactez-nous"
+                    ? "Ouvrir dans Google Maps"
+                    : "Open in Google Maps"}
+                </a>
               </div>
             </div>
           </div>
