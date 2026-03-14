@@ -1,8 +1,6 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
-import { db, appointmentsTable } from "@workspace/db";
 import { SendChatMessageBody } from "@workspace/api-zod";
-import { processChatMessage } from "../lib/chatbot.js";
+import { processChatMessage, executeAction } from "../lib/chatbot.js";
 
 const router: IRouter = Router();
 
@@ -13,56 +11,23 @@ router.post("/chat", async (req, res): Promise<void> => {
     return;
   }
 
-  const { message, sessionId } = parsed.data;
+  const { message, sessionId, lang } = parsed.data;
 
-  const reply = await processChatMessage(
+  const { reply, action } = await processChatMessage(
     message,
     sessionId,
-    async (data) => {
-      const [appt] = await db
-        .insert(appointmentsTable)
-        .values({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          service: data.service,
-          preferred_date: data.preferred_date,
-          preferred_time: data.preferred_time,
-          notes: data.notes ?? null,
-        })
-        .returning();
-      return { id: appt.id };
-    },
-    async (email) => {
-      return db
-        .select()
-        .from(appointmentsTable)
-        .where(eq(appointmentsTable.email, email))
-        .orderBy(appointmentsTable.created_at);
-    },
-    async (id) => {
-      const [deleted] = await db
-        .delete(appointmentsTable)
-        .where(eq(appointmentsTable.id, id))
-        .returning();
-      return !!deleted;
-    },
-    async (id, data) => {
-      const updateData: Partial<typeof appointmentsTable.$inferInsert> = {};
-      if (data.preferred_date) updateData.preferred_date = data.preferred_date;
-      if (data.preferred_time) updateData.preferred_time = data.preferred_time;
-      if (data.status) updateData.status = data.status;
-
-      const [updated] = await db
-        .update(appointmentsTable)
-        .set(updateData)
-        .where(eq(appointmentsTable.id, id))
-        .returning();
-      return !!updated;
-    }
+    lang || "fr",
   );
 
-  res.json(reply);
+  let actionResult = undefined;
+  if (action) {
+    actionResult = await executeAction(action as Record<string, unknown>);
+  }
+
+  res.json({
+    reply,
+    action: actionResult,
+  });
 });
 
 export default router;

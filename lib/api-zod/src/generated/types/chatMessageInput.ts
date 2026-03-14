@@ -5,8 +5,10 @@
  * Dr. Senhaji Jalil Dental Clinic API
  * OpenAPI spec version: 0.1.0
  */
+import type { ChatMessageInputLang } from "./chatMessageInputLang";
 
 export interface ChatMessageInput {
   message: string;
   sessionId: string;
+  lang?: ChatMessageInputLang;
 }

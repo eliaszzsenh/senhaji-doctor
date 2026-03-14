@@ -12,10 +12,15 @@ export const appointmentsTable = pgTable("appointments", {
   preferred_time: text("preferred_time").notNull(),
   notes: text("notes"),
   status: text("status").notNull().default("pending"),
-  created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  lang: text("lang").default("fr"),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
-export const insertAppointmentSchema = createInsertSchema(appointmentsTable).omit({
+export const insertAppointmentSchema = createInsertSchema(
+  appointmentsTable,
+).omit({
   id: true,
   created_at: true,
 });

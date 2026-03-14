@@ -10,7 +10,14 @@
   },
   "private": true,
   "devDependencies": {
-    "typescript": "~5.9.2",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
+  },
+  "dependencies": {
+    "@node-rs/argon2-win32-x64-msvc": "^2.0.2",
+    "@node-rs/bcrypt-win32-x64-msvc": "^1.10.7",
+    "@rollup/rollup-win32-x64-msvc": "^4.59.0",
+    "lightningcss": "^1.32.0",
+    "lightningcss-win32-x64-msvc": "^1.32.0"
   }
 }

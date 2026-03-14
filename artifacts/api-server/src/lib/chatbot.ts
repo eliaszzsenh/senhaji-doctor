@@ -1,391 +1,225 @@
-type SessionState = {
-  step: string;
-  data: Record<string, string>;
+import OpenAI from "openai";
+import { eq } from "drizzle-orm";
+import { db, appointmentsTable, chatSessionsTable } from "@workspace/db";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+interface Message {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+const CLINIC_INFO: Record<string, string> = {
+  fr: `
+INFORMATIONS DU CABINET:
+- Docteur: Dr. Senhaji Jalil, 25 ans d'expérience
+- Tél: +212 707 15 15 14
+- Email: cdsstomato@gmail.com
+- Horaires: Lundi-Vendredi 9h-19h, Samedi 9h-14h
+- Services: Odontologie générale, Endodontie rotatoire, Esthétique dentaire (DSD), Prothèse dentaire, Chirurgie orale, Laser dentaire diode
+`,
+  en: `
+CLINIC INFORMATION:
+- Doctor: Dr. Senhaji Jalil, 25 years of experience
+- Phone: +212 707 15 15 14
+- Email: cdsstomato@gmail.com
+- Hours: Monday-Friday 9am-7pm, Saturday 9am-2pm
+- Services: General dentistry, Rotatory endodontics, Dental aesthetics (DSD), Dental prosthesis, Oral surgery, Diode dental laser
+`,
+  ar: `
+معلومات العيادة:
+- الطبيب: الدكتور سنهاجي جليل، 25 عامًا من الخبرة
+- الهاتف: +212 707 15 15 14
+- البريد الإلكتروني: cdsstomato@gmail.com
+- ساعات العمل: الاثنين إلى الجمعة 9ص-7م، السبت 9ص-2م
+- الخدمات: طب الأسنان العام، علاج الجذور الدوراني، تجميل الأسنان، التعويضات السنية، جراحة الفم، ليزر الثنائي للأسنان
+`,
+  darija: `
+معلومات العيادة:
+- Doctor: Dr. Senhaji Jalil, 25 عام ديال التجربة
+- الهاتف: +212 707 15 15 14
+- Email: cdsstomato@gmail.com
+- Hours: Monday to Friday 9-7, Saturday 9-2
+- Services: طب أسنان عام, علاج الجذور, تجميل أسنان, تعويضات, جراحة فم, ليزر
+`,
 };
 
-const sessions = new Map<string, SessionState>();
+const SYSTEM_PROMPT_TEMPLATE = (lang: string) => {
+  const langPrompts: Record<string, string> = {
+    fr: `Tu es l'assistant virtuel du Centre Dentaire Senhaji. Réponds TOUJOURS en français.`,
+    en: `You are the virtual assistant of Centre Dentaire Senhaji. ALWAYS respond in English.`,
+    ar: `أنت المساعد الافتراضي لمركز سنهاجي للأسنان. أجب دائماً باللغة العربية الفصحى.`,
+    darija: `نتا المساعد الافتراضي ديال مركز سنهاجي للأسنان. جاوب ديما بالدارجة المغربية.`,
+  };
 
-const SERVICES = [
-  "Odontología General & Conservadora",
-  "Endodoncia Rotatoria",
-  "Estética Dental & DSD",
-  "Prótesis Dental",
-  "Cirugía Oral",
-  "Láser Dental de Diodo",
-];
+  const basePrompt = langPrompts[lang] || langPrompts.fr;
 
-const OPENING_HOURS = "Lunes a Viernes: 9:00 - 19:00\nSábado: 9:00 - 14:00\nDomingo: Cerrado";
+  return `${basePrompt}
+${CLINIC_INFO[lang] || CLINIC_INFO.fr}
 
-const CONTACT_INFO = "📞 Teléfono: +212 707 15 15 14\n📧 Email: cdsstomato@gmail.com\n📍 Casablanca, Marruecos (con atención a pacientes de Valencia, España)";
+TU PEUX FAIRE EXACTEMENT 4 CHOSES:
+1. PRENDRE RDV: collecter nom, service, date (YYYY-MM-DD), créneau (matin/après-midi), email, téléphone.
+   Quand tu as TOUT: ACTION:{"type":"CREATE_APPOINTMENT","data":{"name":"...","service":"...","preferred_date":"...","preferred_time":"...","email":"...","phone":"..."}}
 
-function getOrCreateSession(sessionId: string): SessionState {
-  if (!sessions.has(sessionId)) {
-    sessions.set(sessionId, { step: "idle", data: {} });
-  }
-  return sessions.get(sessionId)!;
-}
+2. ANNULER RDV: demander email, puis ID du RDV.
+   ACTION:{"type":"CANCEL_APPOINTMENT","id":...}
 
-function resetSession(sessionId: string): void {
-  sessions.set(sessionId, { step: "idle", data: {} });
-}
+3. MODIFIER RDV: demander email, ID du RDV, nouvelle date, nouveau créneau.
+   ACTION:{"type":"UPDATE_APPOINTMENT","id":...,"preferred_date":"...","preferred_time":"..."}
 
-function detectIntent(message: string): string {
-  const msg = message.toLowerCase().trim();
+4. INFORMATIONS: répondre directement aux questions sur services, horaires, contact.
 
-  if (/\b(reservar|reserva|cita|book|appointment|agendar|quiero cita|necesito cita)\b/.test(msg)) return "book";
-  if (/\b(ver cita|mis citas|consultar cita|check appointment|estado cita)\b/.test(msg)) return "view";
-  if (/\b(cancelar|cancel|anular|borrar cita)\b/.test(msg)) return "cancel";
-  if (/\b(cambiar|reschedule|reprogramar|reagendar|nueva fecha|otro día)\b/.test(msg)) return "reschedule";
-  if (/\b(servicio|tratamiento|servicos|tratamientos|que ofrecen|que hacen|especialidad)\b/.test(msg)) return "services";
-  if (/\b(contacto|teléfono|email|dirección|donde|ubicación|contact)\b/.test(msg)) return "contact";
-  if (/\b(horario|hora|horarios|schedule|abierto|abre|cierra)\b/.test(msg)) return "hours";
-  if (/\b(hola|hi|hello|buenos días|buenas|saludos|hey)\b/.test(msg)) return "greeting";
-  if (/\b(gracias|thank|perfecto|genial|ok|okay|bien|vale|listo)\b/.test(msg)) return "thanks";
-  if (/\b(menu|ayuda|help|opciones|que puedes|que haces)\b/.test(msg)) return "menu";
-
-  return "fallback";
-}
-
-const QUICK_REPLIES_MAIN = ["Reservar cita", "Ver mis citas", "Servicios", "Contacto"];
+RÈGLES:
+- Collecte les infos UNE PAR UNE
+- Ne pose jamais plusieurs questions à la fois
+- Sois chaleureux et professionnel
+- Le format ACTION doit être sur une ligne séparée à la FIN de ta réponse si une action est nécessaire
+- Si pas d'action, ne mets pas de ligne ACTION
+- Réponds toujours de manière complète et utile`;
+};
 
 export async function processChatMessage(
   message: string,
   sessionId: string,
-  createAppointment: (data: Record<string, string>) => Promise<{ id: number }>,
-  getAppointmentsByEmail: (email: string) => Promise<unknown[]>,
-  cancelAppointment: (id: number) => Promise<boolean>,
-  updateAppointment: (id: number, data: Record<string, string>) => Promise<boolean>
-): Promise<{ reply: string; action?: string; quickReplies?: string[] }> {
-  const session = getOrCreateSession(sessionId);
+  lang: string = "fr",
+): Promise<{ reply: string; action?: unknown }> {
+  try {
+    let session = await db
+      .select()
+      .from(chatSessionsTable)
+      .where(eq(chatSessionsTable.id, sessionId))
+      .then((rows) => rows[0]);
 
-  // Handle multi-turn flows
-  if (session.step !== "idle") {
-    return handleFlow(message, sessionId, session, createAppointment, getAppointmentsByEmail, cancelAppointment, updateAppointment);
-  }
+    const messages: Message[] = [];
 
-  const intent = detectIntent(message);
+    if (!session) {
+      await db.insert(chatSessionsTable).values({
+        id: sessionId,
+        messages: [],
+        lang,
+      });
+      messages.push({
+        role: "system",
+        content: SYSTEM_PROMPT_TEMPLATE(lang),
+      });
+    } else {
+      if (session.lang !== lang) {
+        await db
+          .update(chatSessionsTable)
+          .set({ lang })
+          .where(eq(chatSessionsTable.id, sessionId));
+      }
+      messages.push({
+        role: "system",
+        content: SYSTEM_PROMPT_TEMPLATE(lang),
+      });
+      const storedMessages = (session.messages || []) as Message[];
+      messages.push(...storedMessages);
+    }
 
-  switch (intent) {
-    case "greeting":
-      return {
-        reply: "¡Hola! Soy el asistente virtual del Dr. Senhaji Jalil 👋\n\n¿En qué puedo ayudarte hoy? Puedo ayudarte a reservar una cita, consultar tus citas, informarte sobre nuestros tratamientos o darte información de contacto.",
-        quickReplies: QUICK_REPLIES_MAIN,
-      };
+    messages.push({ role: "user", content: message });
 
-    case "book":
-      session.step = "book_name";
-      session.data = {};
-      return {
-        reply: "¡Perfecto! Voy a ayudarte a reservar tu cita con el Dr. Senhaji Jalil. 😊\n\n¿Cuál es tu nombre completo?",
-      };
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages,
+      temperature: 0.7,
+    });
 
-    case "view":
-      session.step = "view_email";
-      session.data = {};
-      return {
-        reply: "Para consultar tus citas, necesito tu dirección de email. ¿Cuál es?",
-      };
+    const assistantReply =
+      response.choices[0]?.message?.content || "Désolé, je n'ai pas compris.";
 
-    case "cancel":
-      session.step = "cancel_email";
-      session.data = {};
-      return {
-        reply: "Para cancelar tu cita, necesito tu email y el número de cita. Primero, ¿cuál es tu email?",
-      };
+    const actionMatch = assistantReply.match(/ACTION:\s*(\{[^}]+\})/);
+    let action: unknown = undefined;
+    let reply = assistantReply;
 
-    case "reschedule":
-      session.step = "reschedule_email";
-      session.data = {};
-      return {
-        reply: "Para reprogramar tu cita, necesito tu email. ¿Cuál es?",
-      };
+    if (actionMatch) {
+      try {
+        action = JSON.parse(actionMatch[1]);
+        reply = assistantReply.replace(actionMatch[0], "").trim();
+      } catch {
+        action = undefined;
+      }
+    }
 
-    case "services":
-      return {
-        reply: `🦷 Nuestros tratamientos disponibles:\n\n${SERVICES.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\n¿Te gustaría reservar una cita para alguno de estos servicios?`,
-        quickReplies: ["Reservar cita", "Más información", "Contacto"],
-      };
+    const updatedMessages = [
+      ...messages.slice(1),
+      { role: "assistant" as const, content: assistantReply },
+    ];
 
-    case "contact":
-      return {
-        reply: `📋 Información de contacto del Dr. Senhaji Jalil:\n\n${CONTACT_INFO}\n\nActualmente atendemos pacientes de Valencia, España con citas presenciales en Casablanca.`,
-        quickReplies: QUICK_REPLIES_MAIN,
-      };
+    await db
+      .update(chatSessionsTable)
+      .set({
+        messages: updatedMessages,
+        updated_at: new Date(),
+      })
+      .where(eq(chatSessionsTable.id, sessionId));
 
-    case "hours":
-      return {
-        reply: `🕐 Horario de atención:\n\n${OPENING_HOURS}\n\n¿Deseas reservar una cita?`,
-        quickReplies: ["Reservar cita", "Contacto"],
-      };
-
-    case "thanks":
-      resetSession(sessionId);
-      return {
-        reply: "¡De nada! Estamos aquí para ayudarte. 😊 Si necesitas algo más, no dudes en preguntar.",
-        quickReplies: QUICK_REPLIES_MAIN,
-      };
-
-    case "menu":
-      return {
-        reply: "Puedo ayudarte con:\n\n• 📅 Reservar una cita\n• 🔍 Ver tus citas\n• ❌ Cancelar una cita\n• 🔄 Reprogramar una cita\n• 🦷 Información sobre servicios\n• 📞 Información de contacto\n• 🕐 Horarios\n\n¿Qué necesitas?",
-        quickReplies: QUICK_REPLIES_MAIN,
-      };
-
-    default:
-      return {
-        reply: "No entendí tu mensaje. Puedo ayudarte con reservas, consultar citas, información sobre servicios y horarios. ¿En qué puedo ayudarte?",
-        quickReplies: QUICK_REPLIES_MAIN,
-      };
+    return { reply, action };
+  } catch (error) {
+    console.error("Chat error:", error);
+    return {
+      reply: "Une erreur s'est produite. Veuillez réessayer plus tard.",
+    };
   }
 }
 
-async function handleFlow(
-  message: string,
-  sessionId: string,
-  session: SessionState,
-  createAppointment: (data: Record<string, string>) => Promise<{ id: number }>,
-  getAppointmentsByEmail: (email: string) => Promise<unknown[]>,
-  cancelAppointment: (id: number) => Promise<boolean>,
-  updateAppointment: (id: number, data: Record<string, string>) => Promise<boolean>
-): Promise<{ reply: string; action?: string; quickReplies?: string[] }> {
-  const msg = message.trim();
-
-  // BOOK FLOW
-  if (session.step === "book_name") {
-    session.data.name = msg;
-    session.step = "book_service";
-    return {
-      reply: `Encantado, ${msg}! 😊\n\n¿Qué servicio necesitas?\n\n${SERVICES.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\nResponde con el número o nombre del servicio.`,
-    };
-  }
-
-  if (session.step === "book_service") {
-    const num = parseInt(msg);
-    if (num >= 1 && num <= SERVICES.length) {
-      session.data.service = SERVICES[num - 1];
-    } else {
-      const match = SERVICES.find((s) => s.toLowerCase().includes(msg.toLowerCase()));
-      if (match) {
-        session.data.service = match;
-      } else {
+export async function executeAction(
+  action: Record<string, unknown>,
+): Promise<{ success: boolean; message: string }> {
+  try {
+    switch (action.type) {
+      case "CREATE_APPOINTMENT": {
+        const data = action.data as Record<string, string>;
+        const [appt] = await db
+          .insert(appointmentsTable)
+          .values({
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            service: data.service,
+            preferred_date: data.preferred_date,
+            preferred_time: data.preferred_time,
+            notes: data.notes || null,
+            status: "pending",
+          })
+          .returning();
         return {
-          reply: `Por favor elige un servicio válido (1-${SERVICES.length}):\n\n${SERVICES.map((s, i) => `${i + 1}. ${s}`).join("\n")}`,
+          success: true,
+          message: `Rendez-vous créé avec succès! ID: ${appt.id}`,
         };
       }
+
+      case "CANCEL_APPOINTMENT": {
+        const id = action.id as number;
+        await db
+          .update(appointmentsTable)
+          .set({ status: "cancelled" })
+          .where(eq(appointmentsTable.id, id));
+        return { success: true, message: "Rendez-vous annulé." };
+      }
+
+      case "UPDATE_APPOINTMENT": {
+        const id = action.id as number;
+        await db
+          .update(appointmentsTable)
+          .set({
+            preferred_date: action.preferred_date as string,
+            preferred_time: action.preferred_time as string,
+          })
+          .where(eq(appointmentsTable.id, id));
+        return { success: true, message: "Rendez-vous modifié." };
+      }
+
+      default:
+        return { success: false, message: "Action inconnue" };
     }
-    session.step = "book_date";
+  } catch (error) {
+    console.error("Action error:", error);
     return {
-      reply: `Perfecto, ${session.data.service}. ¿Cuál es tu fecha preferida? (por ejemplo: 2025-03-20)`,
+      success: false,
+      message: "Erreur lors de l'exécution de l'action",
     };
   }
-
-  if (session.step === "book_date") {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(msg) && !/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(msg)) {
-      return { reply: "Por favor indica la fecha en formato AAAA-MM-DD (por ejemplo: 2025-03-20)" };
-    }
-    session.data.preferred_date = msg;
-    session.step = "book_time";
-    return {
-      reply: "¿Prefieres atención por la Mañana (9:00-13:00) o por la Tarde (14:00-19:00)?",
-      quickReplies: ["Mañana", "Tarde"],
-    };
-  }
-
-  if (session.step === "book_time") {
-    const lower = msg.toLowerCase();
-    if (lower.includes("mañana") || lower.includes("manana") || lower === "morning") {
-      session.data.preferred_time = "Mañana";
-    } else if (lower.includes("tarde") || lower === "afternoon") {
-      session.data.preferred_time = "Tarde";
-    } else {
-      return {
-        reply: "¿Prefieres atención por la Mañana o por la Tarde?",
-        quickReplies: ["Mañana", "Tarde"],
-      };
-    }
-    session.step = "book_email";
-    return { reply: "¿Cuál es tu dirección de email?" };
-  }
-
-  if (session.step === "book_email") {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(msg)) {
-      return { reply: "Por favor introduce un email válido." };
-    }
-    session.data.email = msg;
-    session.step = "book_phone";
-    return { reply: "¿Y tu número de teléfono?" };
-  }
-
-  if (session.step === "book_phone") {
-    session.data.phone = msg;
-    session.step = "book_confirm";
-    return {
-      reply: `Perfecto! Voy a confirmar tu cita:\n\n👤 Nombre: ${session.data.name}\n🦷 Servicio: ${session.data.service}\n📅 Fecha: ${session.data.preferred_date}\n🕐 Horario: ${session.data.preferred_time}\n📧 Email: ${session.data.email}\n📞 Teléfono: ${session.data.phone}\n\n¿Confirmas la cita?`,
-      quickReplies: ["Sí, confirmar", "Cancelar"],
-    };
-  }
-
-  if (session.step === "book_confirm") {
-    const lower = msg.toLowerCase();
-    if (lower.includes("sí") || lower.includes("si") || lower.includes("confirm") || lower.includes("yes")) {
-      try {
-        const appt = await createAppointment(session.data);
-        resetSession(sessionId);
-        return {
-          reply: `✅ ¡Cita reservada con éxito! Tu número de cita es #${appt.id}.\n\nRecibirás confirmación en ${session.data.email}. El Dr. Senhaji Jalil te atenderá el ${session.data.preferred_date} por la ${session.data.preferred_time}.\n\n¿Necesitas algo más?`,
-          action: "appointment_created",
-          quickReplies: QUICK_REPLIES_MAIN,
-        };
-      } catch {
-        resetSession(sessionId);
-        return {
-          reply: "Hubo un error al reservar tu cita. Por favor inténtalo de nuevo o contacta directamente: +212 707 15 15 14",
-          quickReplies: QUICK_REPLIES_MAIN,
-        };
-      }
-    } else {
-      resetSession(sessionId);
-      return {
-        reply: "Reserva cancelada. ¿Puedo ayudarte con algo más?",
-        quickReplies: QUICK_REPLIES_MAIN,
-      };
-    }
-  }
-
-  // VIEW FLOW
-  if (session.step === "view_email") {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(msg)) {
-      return { reply: "Por favor introduce un email válido." };
-    }
-    try {
-      const appointments = await getAppointmentsByEmail(msg) as Array<Record<string, unknown>>;
-      resetSession(sessionId);
-      if (appointments.length === 0) {
-        return {
-          reply: `No encontré citas para el email ${msg}. ¿Deseas reservar una nueva cita?`,
-          quickReplies: ["Reservar cita", "Contacto"],
-        };
-      }
-      const list = appointments
-        .map((a) => `📋 Cita #${a.id}\n   Servicio: ${a.service}\n   Fecha: ${a.preferred_date} - ${a.preferred_time}\n   Estado: ${a.status}`)
-        .join("\n\n");
-      return {
-        reply: `Tus citas:\n\n${list}\n\n¿Necesitas algo más?`,
-        quickReplies: QUICK_REPLIES_MAIN,
-      };
-    } catch {
-      resetSession(sessionId);
-      return { reply: "Error al buscar tus citas. Por favor intenta de nuevo.", quickReplies: QUICK_REPLIES_MAIN };
-    }
-  }
-
-  // CANCEL FLOW
-  if (session.step === "cancel_email") {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(msg)) {
-      return { reply: "Por favor introduce un email válido." };
-    }
-    session.data.email = msg;
-    session.step = "cancel_id";
-    return { reply: "¿Cuál es el número de tu cita? (por ejemplo: 5)" };
-  }
-
-  if (session.step === "cancel_id") {
-    const id = parseInt(msg);
-    if (isNaN(id)) {
-      return { reply: "Por favor introduce un número de cita válido." };
-    }
-    session.data.appointmentId = msg;
-    session.step = "cancel_confirm";
-    return {
-      reply: `¿Confirmas la cancelación de la cita #${id}?`,
-      quickReplies: ["Sí, cancelar", "No, mantener"],
-    };
-  }
-
-  if (session.step === "cancel_confirm") {
-    const lower = msg.toLowerCase();
-    if (lower.includes("sí") || lower.includes("si") || lower.includes("cancel") || lower.includes("yes")) {
-      try {
-        const ok = await cancelAppointment(parseInt(session.data.appointmentId));
-        resetSession(sessionId);
-        if (ok) {
-          return { reply: `✅ Tu cita #${session.data.appointmentId} ha sido cancelada. ¿Puedo ayudarte con algo más?`, quickReplies: QUICK_REPLIES_MAIN };
-        } else {
-          return { reply: "No encontré esa cita. Verifica el número e inténtalo de nuevo.", quickReplies: QUICK_REPLIES_MAIN };
-        }
-      } catch {
-        resetSession(sessionId);
-        return { reply: "Error al cancelar la cita. Por favor contacta directamente: +212 707 15 15 14", quickReplies: QUICK_REPLIES_MAIN };
-      }
-    } else {
-      resetSession(sessionId);
-      return { reply: "Cancelación abortada. Tu cita sigue activa. ¿Puedo ayudarte con algo más?", quickReplies: QUICK_REPLIES_MAIN };
-    }
-  }
-
-  // RESCHEDULE FLOW
-  if (session.step === "reschedule_email") {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(msg)) {
-      return { reply: "Por favor introduce un email válido." };
-    }
-    session.data.email = msg;
-    session.step = "reschedule_id";
-    return { reply: "¿Cuál es el número de la cita que quieres reprogramar?" };
-  }
-
-  if (session.step === "reschedule_id") {
-    const id = parseInt(msg);
-    if (isNaN(id)) {
-      return { reply: "Por favor introduce un número de cita válido." };
-    }
-    session.data.appointmentId = msg;
-    session.step = "reschedule_date";
-    return { reply: "¿Cuál es la nueva fecha que prefieres? (AAAA-MM-DD)" };
-  }
-
-  if (session.step === "reschedule_date") {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(msg)) {
-      return { reply: "Por favor indica la fecha en formato AAAA-MM-DD (por ejemplo: 2025-03-25)" };
-    }
-    session.data.preferred_date = msg;
-    session.step = "reschedule_time";
-    return { reply: "¿Mañana o Tarde?", quickReplies: ["Mañana", "Tarde"] };
-  }
-
-  if (session.step === "reschedule_time") {
-    const lower = msg.toLowerCase();
-    if (lower.includes("mañana") || lower.includes("manana")) {
-      session.data.preferred_time = "Mañana";
-    } else if (lower.includes("tarde")) {
-      session.data.preferred_time = "Tarde";
-    } else {
-      return { reply: "¿Mañana o Tarde?", quickReplies: ["Mañana", "Tarde"] };
-    }
-    try {
-      const ok = await updateAppointment(parseInt(session.data.appointmentId), {
-        preferred_date: session.data.preferred_date,
-        preferred_time: session.data.preferred_time,
-      });
-      resetSession(sessionId);
-      if (ok) {
-        return {
-          reply: `✅ Tu cita #${session.data.appointmentId} ha sido reprogramada para el ${session.data.preferred_date} por la ${session.data.preferred_time}. ¿Necesitas algo más?`,
-          action: "appointment_updated",
-          quickReplies: QUICK_REPLIES_MAIN,
-        };
-      } else {
-        return { reply: "No encontré esa cita. Verifica el número e inténtalo de nuevo.", quickReplies: QUICK_REPLIES_MAIN };
-      }
-    } catch {
-      resetSession(sessionId);
-      return { reply: "Error al reprogramar. Por favor contacta: +212 707 15 15 14", quickReplies: QUICK_REPLIES_MAIN };
-    }
-  }
-
-  // Fallback
-  resetSession(sessionId);
-  return {
-    reply: "Lo siento, no pude procesar tu solicitud. ¿En qué puedo ayudarte?",
-    quickReplies: QUICK_REPLIES_MAIN,
-  };
 }

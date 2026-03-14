@@ -5,6 +5,7 @@
  * Dr. Senhaji Jalil Dental Clinic API
  * OpenAPI spec version: 0.1.0
  */
+import type { CreateAppointmentInputLang } from "./createAppointmentInputLang";
 
 export interface CreateAppointmentInput {
   name: string;
@@ -14,4 +15,5 @@ export interface CreateAppointmentInput {
   preferred_date: string;
   preferred_time: string;
   notes?: string | null;
+  lang?: CreateAppointmentInputLang;
 }

@@ -9,6 +9,16 @@ export interface HealthStatus {
   status: string;
 }
 
+export type AppointmentLang =
+  (typeof AppointmentLang)[keyof typeof AppointmentLang];
+
+export const AppointmentLang = {
+  fr: "fr",
+  en: "en",
+  ar: "ar",
+  darija: "darija",
+} as const;
+
 export interface Appointment {
   id: number;
   name: string;
@@ -19,8 +29,19 @@ export interface Appointment {
   preferred_time: string;
   notes?: string | null;
   status: string;
+  lang?: AppointmentLang;
   created_at: string;
 }
+
+export type CreateAppointmentInputLang =
+  (typeof CreateAppointmentInputLang)[keyof typeof CreateAppointmentInputLang];
+
+export const CreateAppointmentInputLang = {
+  fr: "fr",
+  en: "en",
+  ar: "ar",
+  darija: "darija",
+} as const;
 
 export interface CreateAppointmentInput {
   name: string;
@@ -30,6 +51,7 @@ export interface CreateAppointmentInput {
   preferred_date: string;
   preferred_time: string;
   notes?: string | null;
+  lang?: CreateAppointmentInputLang;
 }
 
 export interface UpdateAppointmentInput {
@@ -45,9 +67,20 @@ export interface CreateContactMessageInput {
   message: string;
 }
 
+export type ChatMessageInputLang =
+  (typeof ChatMessageInputLang)[keyof typeof ChatMessageInputLang];
+
+export const ChatMessageInputLang = {
+  fr: "fr",
+  en: "en",
+  ar: "ar",
+  darija: "darija",
+} as const;
+
 export interface ChatMessageInput {
   message: string;
   sessionId: string;
+  lang?: ChatMessageInputLang;
 }
 
 export interface ChatReply {

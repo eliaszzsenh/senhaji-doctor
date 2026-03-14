@@ -7,9 +7,12 @@
  */
 
 export * from "./appointment";
+export * from "./appointmentLang";
 export * from "./chatMessageInput";
+export * from "./chatMessageInputLang";
 export * from "./chatReply";
 export * from "./createAppointmentInput";
+export * from "./createAppointmentInputLang";
 export * from "./createContactMessageInput";
 export * from "./errorResponse";
 export * from "./getAppointmentsParams";

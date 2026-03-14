@@ -226,6 +226,9 @@ components:
           nullable: true
         status:
           type: string
+        lang:
+          type: string
+          enum: [fr, en, ar, darija]
         created_at:
           type: string
       required:
@@ -257,6 +260,9 @@ components:
         notes:
           type: string
           nullable: true
+        lang:
+          type: string
+          enum: [fr, en, ar, darija]
       required:
         - name
         - email
@@ -299,6 +305,9 @@ components:
           type: string
         sessionId:
           type: string
+        lang:
+          type: string
+          enum: [fr, en, ar, darija]
       required:
         - message
         - sessionId

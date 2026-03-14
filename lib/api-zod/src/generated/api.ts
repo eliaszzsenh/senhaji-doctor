@@ -31,6 +31,7 @@ export const GetAppointmentsResponseItem = zod.object({
   preferred_time: zod.string(),
   notes: zod.string().nullish(),
   status: zod.string(),
+  lang: zod.enum(["fr", "en", "ar", "darija"]).optional(),
   created_at: zod.string(),
 });
 export const GetAppointmentsResponse = zod.array(GetAppointmentsResponseItem);
@@ -46,6 +47,7 @@ export const CreateAppointmentBody = zod.object({
   preferred_date: zod.string(),
   preferred_time: zod.string(),
   notes: zod.string().nullish(),
+  lang: zod.enum(["fr", "en", "ar", "darija"]).optional(),
 });
 
 /**
@@ -65,6 +67,7 @@ export const GetAppointmentByIdResponse = zod.object({
   preferred_time: zod.string(),
   notes: zod.string().nullish(),
   status: zod.string(),
+  lang: zod.enum(["fr", "en", "ar", "darija"]).optional(),
   created_at: zod.string(),
 });
 
@@ -92,6 +95,7 @@ export const UpdateAppointmentResponse = zod.object({
   preferred_time: zod.string(),
   notes: zod.string().nullish(),
   status: zod.string(),
+  lang: zod.enum(["fr", "en", "ar", "darija"]).optional(),
   created_at: zod.string(),
 });
 
@@ -122,6 +126,7 @@ export const CreateContactMessageBody = zod.object({
 export const SendChatMessageBody = zod.object({
   message: zod.string(),
   sessionId: zod.string(),
+  lang: zod.enum(["fr", "en", "ar", "darija"]).optional(),
 });
 
 export const SendChatMessageResponse = zod.object({
