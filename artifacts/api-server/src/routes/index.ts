@@ -10,7 +10,7 @@ const router: IRouter = Router();
 router.use(healthRouter);
 router.use(appointmentsRouter);
 router.use(contactRouter);
-router.use(chatRouter);
+router.use("/chat", chatRouter);
 router.use(adminRouter);
 
 export default router;
