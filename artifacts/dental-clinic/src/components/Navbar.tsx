@@ -57,27 +57,11 @@ export default function Navbar() {
             isScrolled ? "text-secondary" : "text-secondary lg:text-white",
           )}
         >
-          <div
-            className={cn(
-              "p-2 rounded-xl bg-gradient-to-br from-primary to-orange-400 shadow-lg group-hover:shadow-primary/25 transition-all",
-            )}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-6 h-6 text-white"
-            >
-              <path
-                d="M12 20a10 10 0 1 1 0-20c5.523 0 10 4.477 10 10a1 1 0 0 1-1 1h-3a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4a1 1 0 0 0-1-1H3a1 1 0 0 1-1-1z"
-                opacity="0"
-              />
-              <path d="M12 2C8 2 6 5 6 8c0 3 2 4 2 7 0 2-1 4-1 5 1 0 3-1 4-3 1 2 3 3 4 3 0-1-1-3-1-5 0-3 2-4 2-7 0-3-2-6-6-6z" />
-            </svg>
-          </div>
+          <img
+            src={`${import.meta.env.BASE_URL}images/logo.png`}
+            alt="Dr. Senhaji"
+            className="h-10 w-auto"
+          />
           <div className="flex flex-col leading-tight">
             <span className="text-lg font-bold">Dr. Senhaji</span>
             <span
