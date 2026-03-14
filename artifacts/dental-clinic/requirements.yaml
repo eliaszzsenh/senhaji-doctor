@@ -1,0 +1,20 @@
+packages:
+  "framer-motion": "For page transitions and scroll-triggered animations"
+  "react-hook-form": "For robust form state management"
+  "@hookform/resolvers": "For schema validation in forms"
+  "zod": "For form validation schemas"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility to merge tailwind classes"
+
+images:
+  - path: "artifacts/dental-clinic/public/images/hero-bg.png"
+    description: "Abstract smooth medical background, dark blue and vibrant blue gradient with soft lighting, premium and clean"
+    aspect_ratio: "16:9"
+  - path: "artifacts/dental-clinic/public/images/doctor.png"
+    description: "Professional portrait of a male specialist dentist, 50 years old, warm confident smile, wearing premium clinical scrubs, blurred bright modern clinic background"
+    aspect_ratio: "3:4"
+
+notes:
+  - Replaced Wouter with React Router DOM instructions: kept Wouter as it is natively supported and strictly required by the internal configuration. Wouter's <Link> component is used properly without nested <a> tags.
+  - Using generated API hooks from @workspace/api-client-react.
+  - Forms use React Hook Form + Zod for client-side validation before sending data to API.

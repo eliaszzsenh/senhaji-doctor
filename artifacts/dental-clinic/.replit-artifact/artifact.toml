@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Dr. Senhaji Jalil — Clínica Dental"
+version = "1.0.0"
+id = "artifacts/dental-clinic"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 23961
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/dental-clinic run dev"
+
+[services.env]
+PORT = "23961"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/dental-clinic", "run", "build"]
+publicDir = "artifacts/dental-clinic/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
