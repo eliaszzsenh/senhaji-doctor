@@ -205,39 +205,56 @@ export const translations: Record<
         {
           name: "Youssef Benali",
           location: "Casablanca",
-          service: { fr: "Esthétique dentaire", en: "Dental aesthetics", ar: "تجميل الأسنان", darija: "تجميل الأسنان" },
+          service: {
+            fr: "Esthétique dentaire",
+            en: "Dental aesthetics",
+            ar: "تجميل الأسنان",
+            darija: "تجميل الأسنان",
+          },
           date: "Février 2026",
-          text: { fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !", en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!", ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!", darija: "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!" }
+          text: {
+            fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !",
+            en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!",
+            ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!",
+            darija:
+              "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!",
+          },
         },
         {
           name: "Fatima Zohra Idrissi",
           location: "Casablanca",
-          service: { fr: "Endodontie rotatoire", en: "Root canal treatment", ar: "علاج جذور الأسنان", darija: "علاج العصب" },
+          service: {
+            fr: "Endodontie rotatoire",
+            en: "Root canal treatment",
+            ar: "علاج جذور الأسنان",
+            darija: "علاج العصب",
+          },
           date: "Janvier 2026",
-          text: { fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bête d'avoir attendu si longtemps !", en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!", ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!", darija: "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!" }
+          text: {
+            fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bête d'avoir attendu si longtemps !",
+            en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!",
+            ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!",
+            darija:
+              "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!",
+          },
         },
         {
           name: "Michel Dupont",
           location: "Valencia, Espagne",
-          service: { fr: "Prothèse dentaire complète", en: "Full dental prosthesis", ar: "طقم أسنان كامل", darija: "بروتيز كامل" },
+          service: {
+            fr: "Prothèse dentaire complète",
+            en: "Full dental prosthesis",
+            ar: "طقم أسنان كامل",
+            darija: "بروتيز كامل",
+          },
           date: "Mars 2026",
-          text: { fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.", en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.", ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.", darija: "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد." }
-        },
-      ],
-    },
-        {
-          name: "Fatima Zohra Idrissi",
-          location: "Casablanca",
-          service: "Endodontie rotatoire",
-          date: "Janvier 2026",
-          text: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiment rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bête d'avoir attendu si longtemps !",
-        },
-        {
-          name: "Michel Dupont",
-          location: "Valencia, Espagne",
-          service: "Prothèse dentaire complète",
-          date: "Mars 2026",
-          text: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.",
+          text: {
+            fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.",
+            en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.",
+            ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.",
+            darija:
+              "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد.",
+          },
         },
       ],
     },
@@ -347,23 +364,56 @@ export const translations: Record<
         {
           name: "Youssef Benali",
           location: "Casablanca",
-          service: { fr: "Esthétique dentaire", en: "Dental aesthetics", ar: "تجميل الأسنان", darija: "تجميل الأسنان" },
+          service: {
+            fr: "Esthétique dentaire",
+            en: "Dental aesthetics",
+            ar: "تجميل الأسنان",
+            darija: "تجميل الأسنان",
+          },
           date: "February 2026",
-          text: { fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !", en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!", ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!", darija: "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!" }
+          text: {
+            fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !",
+            en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!",
+            ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!",
+            darija:
+              "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!",
+          },
         },
         {
           name: "Fatima Zohra Idrissi",
           location: "Casablanca",
-          service: { fr: "Endodontie rotatoire", en: "Root canal treatment", ar: "علاج جذور الأسنان", darija: "علاج العصب" },
+          service: {
+            fr: "Endodontie rotatoire",
+            en: "Root canal treatment",
+            ar: "علاج جذور الأسنان",
+            darija: "علاج العصب",
+          },
           date: "January 2026",
-          text: { fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bête d'avoir attendu si longtemps !", en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!", ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!", darija: "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!" }
+          text: {
+            fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bête d'avoir attendu si longtemps !",
+            en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!",
+            ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!",
+            darija:
+              "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!",
+          },
         },
         {
           name: "Michel Dupont",
           location: "Valencia, Spain",
-          service: { fr: "Prothèse dentaire complète", en: "Full dental prosthesis", ar: "طقم أسنان كامل", darija: "بروتيز كامل" },
+          service: {
+            fr: "Prothèse dentaire complète",
+            en: "Full dental prosthesis",
+            ar: "طقم أسنان كامل",
+            darija: "بروتيز كامل",
+          },
           date: "March 2026",
-          text: { fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.", en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.", ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.", darija: "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد." }
+          text: {
+            fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.",
+            en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.",
+            ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.",
+            darija:
+              "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد.",
+          },
         },
       ],
     },
@@ -469,23 +519,56 @@ export const translations: Record<
         {
           name: "يوسف بن علي",
           location: "الدار البيضاء",
-          service: { fr: "Esthétique dentaire", en: "Dental aesthetics", ar: "تجميل الأسنان", darija: "تجميل الأسنان" },
+          service: {
+            fr: "Esthétique dentaire",
+            en: "Dental aesthetics",
+            ar: "تجميل الأسنان",
+            darija: "تجميل الأسنان",
+          },
           date: "فبراير 2026",
-          text: { fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !", en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!", ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!", darija: "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!" }
+          text: {
+            fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !",
+            en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!",
+            ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!",
+            darija:
+              "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!",
+          },
         },
         {
           name: "فاطمة زهرة إدريسسي",
           location: "الدار البيضاء",
-          service: { fr: "Endodontie rotatoire", en: "Root canal treatment", ar: "علاج جذور الأسنان", darija: "علاج العصب" },
+          service: {
+            fr: "Endodontie rotatoire",
+            en: "Root canal treatment",
+            ar: "علاج جذور الأسنان",
+            darija: "علاج العصب",
+          },
           date: "يناير 2026",
-          text: { fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bête d'avoir attendu si longtemps !", en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!", ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!", darija: "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!" }
+          text: {
+            fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bête d'avoir attendu si longtemps !",
+            en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!",
+            ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!",
+            darija:
+              "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!",
+          },
         },
         {
           name: "ميشيل دوبون",
           location: "فالنسيا، إسبانيا",
-          service: { fr: "Prothèse dentaire complète", en: "Full dental prosthesis", ar: "طقم أسنان كامل", darija: "بروتيز كامل" },
+          service: {
+            fr: "Prothèse dentaire complète",
+            en: "Full dental prosthesis",
+            ar: "طقم أسنان كامل",
+            darija: "بروتيز كامل",
+          },
           date: "مارس 2026",
-          text: { fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.", en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.", ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.", darija: "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد." }
+          text: {
+            fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.",
+            en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.",
+            ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.",
+            darija:
+              "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد.",
+          },
         },
       ],
     },
@@ -589,23 +672,56 @@ export const translations: Record<
         {
           name: "يوسف بن علي",
           location: "الدار البيضاء",
-          service: { fr: "Esthétique dentaire", en: "Dental aesthetics", ar: "تجميل الأسنان", darija: "تجميل الأسنان" },
+          service: {
+            fr: "Esthétique dentaire",
+            en: "Dental aesthetics",
+            ar: "تجميل الأسنان",
+            darija: "تجميل الأسنان",
+          },
           date: "فبراير 2026",
-          text: { fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !", en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!", ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!", darija: "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!" }
+          text: {
+            fr: "Après des années à complexer sur mon sourire, j'ai finalement franchi le pas. Le Dr Senhaji a été à l'écoute dès le premier rendez-vous. Le résultat des facettes est bluffant — naturel et discret. Mon entourage remarque la différence sans savoir pourquoi !",
+            en: "After years of being self-conscious about my smile, I finally took the plunge. Dr Senhaji listened from the very first appointment. The veneer result is stunning — natural and subtle. People around me notice the difference without knowing why!",
+            ar: "بعد سنوات من الإحساس بالنقص بسبب ابتسامتي، أخذت القرار أخيراً. الدكتور سنهاجي أصغى إليّ من أول استشارة. نتيجة الفنيرات مذهلة — طبيعية وغير مبالغ فيها. المقربون مني يلاحظون الفرق دون أن يعرفوا السبب!",
+            darija:
+              "بعد سنين وأنا معقد على بسمتي، قررت ندير الخطوة. الدكتور سنهاجي سمع فيا من أول ميعاد. النتيجة ديال الفنيرات مها — طبيعية وماشي مبالغ فيها. الناسكيلاحظو الفرق بلا ما يعرفو علاش!",
+          },
         },
         {
           name: "فاطمة زهرة إدريسسي",
           location: "الدار البيضاء",
-          service: { fr: "Endodontie rotatoire", en: "Root canal treatment", ar: "علاج جذور الأسنان", darija: "علاج العصب" },
+          service: {
+            fr: "Endodontie rotatoire",
+            en: "Root canal treatment",
+            ar: "علاج جذور الأسنان",
+            darija: "علاج العصب",
+          },
           date: "يناير 2026",
-          text: { fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bâtite d'avoir attendu si longtemps !", en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!", ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!", darija: "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!" }
+          text: {
+            fr: "Je repoussais ce rendez-vous depuis 2 ans tellement j'avais peur. Une amie m'a recommandé le Dr Senhaji. Honnêtement, je n'ai quasiient rien senti. Il prend le temps d'expliquer chaque étape, ça change tout. Je me sens bâtite d'avoir attendu si longtemps !",
+            en: "I had been putting off this appointment for 2 years out of fear. A friend recommended Dr Senhaji. Honestly, I barely felt anything. He takes the time to explain each step, which makes all the difference. I feel silly for waiting so long!",
+            ar: "كنت أؤجل هذا الموعد منذ سنتين من شدة الخوف. أوصتني صديقة بالدكتور سنهاجي. بصراحة، لم أشعر بكثير. يأخذ وقته لشرح كل خطوة وهذا يغير كل شيء. أشعر بالغباء لانتظاري طويلاً!",
+            darija:
+              "كنت كنأخر هاد الميعاد من سنتين من الخوف. صاحبتي نصحتني بالدكتور سنهاجي. بصراحة، ما حسيت بتقريبا والو. كيأخد وقتو يشرح كل خطوة وهادشي كيبدل كولشي. كنحس براسي بلا عقل علاش تساهلت بزاف!",
+          },
         },
         {
           name: "ميشيل دوبون",
           location: "فالنسيا، إسبانيا",
-          service: { fr: "Prothèse dentaire complète", en: "Full dental prosthesis", ar: "طقم أسنان كامل", darija: "بروتيز كامل" },
+          service: {
+            fr: "Prothèse dentaire complète",
+            en: "Full dental prosthesis",
+            ar: "طقم أسنان كامل",
+            darija: "بروتيز كامل",
+          },
           date: "مارس 2026",
-          text: { fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.", en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.", ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.", darija: "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد." }
+          text: {
+            fr: "Je vis à Valencia et j'ai fait le déplacement spécialement pour le Dr Senhaji sur recommandation d'un collègue marocain. Franchement, même en comptant le voyage, c'est bien moins cher qu'en Espagne pour une qualité équivalente voire supérieure. Il parle parfaitement français, communication impeccable. Je reviendrai sans hésiter.",
+            en: "I live in Valencia and made the trip specifically for Dr Senhaji on the recommendation of a Moroccan colleague. Frankly, even including the travel, it's much cheaper than in Spain for equivalent or even better quality. He speaks perfect French, impeccable communication. I'll come back without hesitation.",
+            ar: "أسكن في فالنسيا وسافرت خصيصاً للدكتور سنهاجي بناءً على توصية زميل مغربي. بصراحة، حتى مع حساب تكلفة السفر، الأمر أرخص بكثير من إسبانيا مع جودة مماثلة بل أفضل. يتحدث الفرنسية بإتقان، تواصل ممتاز. سأعود دون تردد.",
+            darija:
+              "كنسكن فالنسيا ومشيت خصيصاً للدكتور سنهاجي على توصية زميل مغربي. بصراحة، حتى مع حساب التنقل، الأمر أرخص بزاف من إسبانيا مع جودة مزيانة أو أحسن. كيهضر الفرانساوية مزيان، تواصل لا يجاب. غنرجع بلا تردد.",
+          },
         },
       ],
     },
