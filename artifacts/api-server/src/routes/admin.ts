@@ -8,6 +8,7 @@ import {
 import { eq, and, gte, sql } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { db, appointmentsTable } from "@workspace/db";
+import { sendAppointmentConfirmedByDoctor } from "../lib/email.js";
 
 const router: IRouter = Router();
 
@@ -99,6 +100,10 @@ router.put(
       return;
     }
 
+    if (status === "confirmed") {
+      sendAppointmentConfirmedByDoctor(appointment);
+    }
+
     res.json({
       ...appointment,
       notes: appointment.notes ?? null,
@@ -182,6 +187,44 @@ router.get(
       sent: results.length,
       reminders: results,
     });
+  },
+);
+
+router.get(
+  "/admin/export-csv",
+  authMiddleware,
+  async (req, res): Promise<void> => {
+    const allAppointments = await db
+      .select()
+      .from(appointmentsTable)
+      .orderBy(appointmentsTable.created_at);
+
+    const serviceNames: Record<string, string> = {
+      general: "Odontologie Generale",
+      endodontics: "Endodontie Rotatoire",
+      aesthetic: "Esthetique Dentaire",
+      prosthesis: "Prothese Dentaire",
+      surgery: "Chirurgie Orale",
+      laser: "Laser Dentaire",
+    };
+
+    const headers =
+      "ID,Nom,Email,Telephone,Service,Date,Creneau,Statut,Cree le\n";
+    const rows = allAppointments
+      .map(
+        (a) =>
+          `${a.id},"${a.name}","${a.email}","${a.phone}","${serviceNames[a.service] || a.service}","${a.preferred_date}","${a.preferred_time}","${a.status}","${a.created_at.toISOString()}"`,
+      )
+      .join("\n");
+
+    const csv = headers + rows;
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=rdv-senhaji.csv",
+    );
+    res.send(csv);
   },
 );
 

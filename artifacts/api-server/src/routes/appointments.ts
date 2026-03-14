@@ -9,6 +9,10 @@ import {
   DeleteAppointmentParams,
   GetAppointmentsQueryParams,
 } from "@workspace/api-zod";
+import {
+  sendNewAppointmentNotification,
+  sendAppointmentConfirmation,
+} from "../lib/email.js";
 
 const router: IRouter = Router();
 
@@ -33,17 +37,71 @@ router.get("/appointments", async (req, res): Promise<void> => {
       .orderBy(appointmentsTable.created_at);
   }
 
-  res.json(appointments.map((a) => ({
-    ...a,
-    notes: a.notes ?? null,
-    created_at: a.created_at.toISOString(),
-  })));
+  res.json(
+    appointments.map((a) => ({
+      ...a,
+      notes: a.notes ?? null,
+      created_at: a.created_at.toISOString(),
+    })),
+  );
 });
 
 router.post("/appointments", async (req, res): Promise<void> => {
   const parsed = CreateAppointmentBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed.data.email)) {
+    res.status(400).json({ error: "Email invalide" });
+    return;
+  }
+
+  if (parsed.data.phone.replace(/\D/g, "").length < 8) {
+    res.status(400).json({ error: "Téléphone invalide (minimum 8 chiffres)" });
+    return;
+  }
+
+  const date = new Date(parsed.data.preferred_date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (date < today) {
+    res.status(400).json({ error: "La date ne peut pas être dans le passé" });
+    return;
+  }
+
+  const maxDate = new Date();
+  maxDate.setMonth(maxDate.getMonth() + 3);
+  if (date > maxDate) {
+    res.status(400).json({ error: "Maximum 3 mois à l'avance" });
+    return;
+  }
+
+  if (date.getDay() === 0) {
+    res.status(400).json({ error: "Le cabinet est fermé le dimanche" });
+    return;
+  }
+
+  let preferredTime = parsed.data.preferred_time;
+  if (date.getDay() === 6 && preferredTime === "apres-midi") {
+    preferredTime = "matin";
+  }
+
+  const existing = await db
+    .select()
+    .from(appointmentsTable)
+    .where(
+      eq(appointmentsTable.email, parsed.data.email) &&
+        eq(appointmentsTable.preferred_date, parsed.data.preferred_date) &&
+        eq(appointmentsTable.service, parsed.data.service),
+    );
+
+  if (existing.length > 0) {
+    res.status(400).json({
+      error: "Vous avez déjà un rendez-vous pour ce service à cette date",
+    });
     return;
   }
 
@@ -55,10 +113,14 @@ router.post("/appointments", async (req, res): Promise<void> => {
       phone: parsed.data.phone,
       service: parsed.data.service,
       preferred_date: parsed.data.preferred_date,
-      preferred_time: parsed.data.preferred_time,
+      preferred_time: preferredTime,
       notes: parsed.data.notes ?? null,
+      lang: parsed.data.lang || "fr",
     })
     .returning();
+
+  sendNewAppointmentNotification(appointment);
+  sendAppointmentConfirmation(appointment);
 
   res.status(201).json({
     ...appointment,
@@ -105,10 +167,13 @@ router.put("/appointments/:id", async (req, res): Promise<void> => {
   }
 
   const updateData: Partial<typeof appointmentsTable.$inferInsert> = {};
-  if (parsed.data.preferred_date) updateData.preferred_date = parsed.data.preferred_date;
-  if (parsed.data.preferred_time) updateData.preferred_time = parsed.data.preferred_time;
+  if (parsed.data.preferred_date)
+    updateData.preferred_date = parsed.data.preferred_date;
+  if (parsed.data.preferred_time)
+    updateData.preferred_time = parsed.data.preferred_time;
   if (parsed.data.status) updateData.status = parsed.data.status;
-  if (parsed.data.notes !== undefined) updateData.notes = parsed.data.notes ?? null;
+  if (parsed.data.notes !== undefined)
+    updateData.notes = parsed.data.notes ?? null;
 
   const [appointment] = await db
     .update(appointmentsTable)

@@ -1,26 +1,29 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-// Pages
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Services from "./pages/Services";
-import Appointment from "./pages/Appointment";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/not-found";
+// Pages - Lazy loaded
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const Appointment = lazy(() => import("./pages/Appointment"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/not-found"));
 
-// Admin Pages
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
+// Admin Pages - Lazy loaded
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
 // Layout
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
 import FloatingCTA from "./components/FloatingCTA";
+import WhatsAppButton from "./components/WhatsAppButton";
 import LanguagePicker from "./components/LanguagePicker";
+import CookieBanner from "./components/CookieBanner";
 
 // i18n
 import { LangProvider, useLang } from "./i18n/LangContext";
@@ -34,22 +37,31 @@ const queryClient = new QueryClient({
   },
 });
 
+const PageLoader = () => (
+  <div className="flex items-center justify-center h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
+
 function PublicRouter() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <div className="flex-grow">
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/about" component={About} />
-          <Route path="/services" component={Services} />
-          <Route path="/appointment" component={Appointment} />
-          <Route path="/contact" component={Contact} />
-          <Route component={NotFound} />
-        </Switch>
+        <Suspense fallback={<PageLoader />}>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/about" component={About} />
+            <Route path="/services" component={Services} />
+            <Route path="/appointment" component={Appointment} />
+            <Route path="/contact" component={Contact} />
+            <Route component={NotFound} />
+          </Switch>
+        </Suspense>
       </div>
       <Footer />
       <ChatWidget />
+      <WhatsAppButton />
       <FloatingCTA />
     </div>
   );
@@ -66,13 +78,16 @@ function AppContent() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Switch>
-            <Route path="/admin/login" component={AdminLogin} />
-            <Route path="/admin" component={AdminDashboard} />
-            <Route component={PublicRouter} />
-          </Switch>
+          <Suspense fallback={<PageLoader />}>
+            <Switch>
+              <Route path="/admin/login" component={AdminLogin} />
+              <Route path="/admin" component={AdminDashboard} />
+              <Route component={PublicRouter} />
+            </Switch>
+          </Suspense>
         </WouterRouter>
         <Toaster />
+        <CookieBanner />
       </TooltipProvider>
     </QueryClientProvider>
   );
