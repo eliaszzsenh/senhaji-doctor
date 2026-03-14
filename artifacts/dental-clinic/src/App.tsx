@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, Component, ReactNode } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -42,6 +42,38 @@ const PageLoader = () => (
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
   </div>
 );
+
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error: string }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: "" };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error: error.message };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center h-screen flex-col gap-4">
+          <h1 className="text-2xl font-bold text-red-600">
+            Une erreur est survenue
+          </h1>
+          <p className="text-gray-600">{this.state.error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg"
+          >
+            Recharger la page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function PublicRouter() {
   return (
@@ -95,9 +127,11 @@ function AppContent() {
 
 function App() {
   return (
-    <LangProvider>
-      <AppContent />
-    </LangProvider>
+    <ErrorBoundary>
+      <LangProvider>
+        <AppContent />
+      </LangProvider>
+    </ErrorBoundary>
   );
 }
 

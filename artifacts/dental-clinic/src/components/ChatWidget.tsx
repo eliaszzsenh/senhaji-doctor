@@ -165,10 +165,8 @@ export default function ChatWidget() {
     }
   };
 
-  const chatPosition = isRTL ? "bottom-6 left-6" : "bottom-6 right-6";
-  const chatPanelPosition = isRTL
-    ? { right: "auto", left: "1rem" }
-    : { left: "auto", right: "1rem" };
+  const chatPosition = "bottom-6 right-6";
+  const chatPanelPosition = "bottom-20 right-6";
 
   return (
     <>
@@ -179,12 +177,177 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            style={chatPanelPosition}
-            className={`fixed bottom-24 z-50 w-[350px] max-w-[calc(100vw-2rem)] h-[520px] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden`}
+            className={`fixed ${chatPanelPosition} z-50 w-[420px] h-[600px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden hidden md:flex`}
             dir={isRTL ? "rtl" : "ltr"}
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-4 flex items-center justify-between text-white shadow-md z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                  <Bot className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold leading-none">
+                    Asst. Dr. Senhaji
+                  </h3>
+                  <span className="text-xs text-blue-200">En ligne</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+              {showLangPicker && (
+                <div className="text-center p-4">
+                  <h4 className="font-semibold text-slate-700 mb-4">
+                    اختر لغتك / Choose your language
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {LANGUAGES.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => handleLangSelect(lang.code)}
+                        className="flex items-center justify-center gap-2 p-3 bg-white border border-slate-200 rounded-xl hover:border-primary hover:bg-primary/5 transition-colors"
+                      >
+                        <span className="text-xl">{lang.flag}</span>
+                        <span className="text-sm font-medium">
+                          {lang.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
+                >
+                  <div
+                    className={`flex gap-2 max-w-[85%] ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-primary text-white" : "bg-accent text-secondary"}`}
+                    >
+                      {msg.role === "user" ? (
+                        <User className="w-4 h-4" />
+                      ) : (
+                        <Bot className="w-4 h-4" />
+                      )}
+                    </div>
+                    <div
+                      className={`p-3 rounded-2xl text-sm ${
+                        msg.role === "user"
+                          ? "bg-primary text-white rounded-tr-sm shadow-sm"
+                          : "bg-white border border-slate-100 text-slate-700 rounded-tl-sm shadow-sm"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+
+                  {msg.actionResult && (
+                    <div className="mt-2 ml-10 p-3 bg-green-50 border border-green-200 rounded-xl">
+                      <p className="text-sm text-green-700">
+                        ✅ {msg.actionResult}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {isTyping && (
+                <div className="flex items-start gap-2">
+                  <div className="w-8 h-8 rounded-full bg-accent text-secondary flex items-center justify-center">
+                    <Bot className="w-4 h-4" />
+                  </div>
+                  <div className="p-3 bg-white border border-slate-100 rounded-2xl rounded-tl-sm flex gap-1">
+                    <span
+                      className="w-2 h-2 rounded-full bg-slate-300 animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    />
+                    <span
+                      className="w-2 h-2 rounded-full bg-slate-300 animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <span
+                      className="w-2 h-2 rounded-full bg-slate-300 animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Quick Replies */}
+            {messages.length > 0 && !showLangPicker && (
+              <div className="px-4 py-2 bg-white border-t border-slate-100 flex flex-wrap gap-2">
+                {QUICK_REPLIES[chatLang].map((qr) => (
+                  <button
+                    key={qr}
+                    onClick={() => handleSend(qr)}
+                    className="text-xs px-3 py-1.5 bg-white border border-primary/20 text-primary hover:bg-primary hover:text-white rounded-full transition-colors shadow-sm"
+                  >
+                    {qr}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Input */}
+            {!showLangPicker && (
+              <div className="p-3 bg-white border-t border-slate-100">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSend(inputValue);
+                  }}
+                  className="relative flex items-center"
+                >
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder={PLACEHOLDERS[chatLang]}
+                    className="w-full bg-slate-100 border-transparent rounded-full px-4 py-3 text-sm focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    disabled={isTyping}
+                    dir={isRTL ? "rtl" : "ltr"}
+                  />
+                  <button
+                    type="submit"
+                    disabled={!inputValue.trim() || isTyping}
+                    className="absolute right-2 rtl:right-auto rtl:left-2 p-1.5 bg-primary text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-orange-600 transition-colors shadow-md"
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </form>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Full Screen Panel */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-white flex flex-col md:hidden"
+            dir={isRTL ? "rtl" : "ltr"}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-4 flex items-center justify-between text-white shadow-md">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
                   <Bot className="w-6 h-6" />

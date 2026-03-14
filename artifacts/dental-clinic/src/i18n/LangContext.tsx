@@ -18,10 +18,16 @@ interface LangContextType {
 
 const LangContext = createContext<LangContextType | null>(null);
 
+const getSavedLang = (): Lang | null => {
+  try {
+    return (localStorage.getItem("lang") as Lang) || null;
+  } catch {
+    return null;
+  }
+};
+
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang | null>(
-    () => (localStorage.getItem("lang") as Lang) || null,
-  );
+  const [lang, setLangState] = useState<Lang | null>(getSavedLang);
 
   const setLang = (newLang: Lang) => {
     localStorage.setItem("lang", newLang);
