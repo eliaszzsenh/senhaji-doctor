@@ -30,7 +30,7 @@ const TESTIMONIALS_INITIALS = [
 ];
 
 export default function Home() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   const getServiceTitle = (key: string) => {
     const serviceKeys: Record<string, string> = {
@@ -311,10 +311,16 @@ export default function Home() {
                     <Star key={j} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <p className="text-slate-700 mb-4 relative z-10">{item.text}</p>
+                <p className="text-slate-700 mb-4 relative z-10">
+                  {typeof item.text === "object"
+                    ? item.text[lang as keyof typeof item.text]
+                    : item.text}
+                </p>
                 <div className="flex items-center gap-2 text-sm text-slate-500 border-t pt-4">
                   <span className="font-medium text-primary">
-                    {item.service}
+                    {typeof item.service === "object"
+                      ? item.service[lang as keyof typeof item.service]
+                      : item.service}
                   </span>
                   <span>•</span>
                   <span>{item.date}</span>
