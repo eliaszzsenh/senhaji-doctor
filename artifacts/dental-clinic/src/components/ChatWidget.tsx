@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLang } from "../i18n/useLang";
-import type { Lang } from "../i18n/translations";
+import { useLang } from "../i18n/LangContext";
+
+type Lang = "fr" | "en" | "ar" | "darija";
 
 type Message = {
   id: string;
@@ -41,6 +42,7 @@ const PLACEHOLDERS: Record<Lang, string> = {
 
 export default function ChatWidget() {
   const { lang: siteLang, isRTL } = useLang();
+  const siteLangValue = siteLang as Lang;
   const [isOpen, setIsOpen] = useState(false);
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [chatLang, setChatLang] = useState<Lang>("fr");
@@ -61,10 +63,10 @@ export default function ChatWidget() {
     const storedChatLang = localStorage.getItem("chat_lang");
     if (storedChatLang) {
       setChatLang(storedChatLang as Lang);
-    } else if (siteLang) {
-      setChatLang(siteLang);
+    } else if (siteLangValue) {
+      setChatLang(siteLangValue);
     }
-  }, [siteLang]);
+  }, [siteLangValue]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -135,7 +137,7 @@ export default function ChatWidget() {
         id: (Date.now() + 1).toString(),
         role: "bot",
         content: data.reply,
-        actionResult: data.action?.success ? data.action.message : undefined,
+        actionResult: data.actionResult || undefined,
       };
       setMessages((prev) => [...prev, botMsg]);
     } catch {
