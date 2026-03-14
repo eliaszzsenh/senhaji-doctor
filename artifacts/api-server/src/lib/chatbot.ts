@@ -40,6 +40,34 @@ async function classifyIntent(message: string, lang: string): Promise<Intent> {
   }
 }
 
+async function extractDate(message: string): Promise<string | null> {
+  const today = new Date().toISOString().split("T")[0];
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    max_tokens: 20,
+    temperature: 0,
+    response_format: { type: "json_object" },
+    messages: [
+      {
+        role: "system",
+        content: `Today is ${today}. Extract date from message as YYYY-MM-DD. 
+                   If no date or past date, return null.
+                   Return ONLY: {"date": "YYYY-MM-DD"} or {"date": null}`,
+      },
+      {
+        role: "user",
+        content: message,
+      },
+    ],
+  });
+  try {
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result.date || null;
+  } catch {
+    return null;
+  }
+}
+
 async function getAvailableSlots(date: string): Promise<string[]> {
   const d = new Date(date + "T12:00:00Z");
   const today = new Date();
@@ -82,11 +110,11 @@ async function getActiveAppointments(email: string) {
 
 const CLINIC_INFO = `
 Centre Dentaire Senhaji — Dr. Senhaji Jalil
-Spécialiste en odontologie, 25 ans d'expérience
-Tél: +212 707 15 15 14 | Email: cdsstomato@gmail.com
-Horaires: Lun-Ven 9h-19h, Sam 9h-14h, Dim: Fermé
-Services: Odontologie générale, Endodontie rotatoire, 
-Esthétique dentaire (DSD), Prothèse dentaire, 
+Spécialiste enodontologie, 25 ans dexperience
+Tel: +212 707 15 15 14 | Email: cdsstomato@gmail.com
+Horaires: Lun-Ven 9h-19h, Sam 9h-14h, Dim: Ferme
+Services: Odontologie generale, Endodontie rotatoire, 
+Esthetique dentaire (DSD), Prothese dentaire, 
 Chirurgie orale, Laser dentaire diode
 `;
 
@@ -105,49 +133,56 @@ async function bookingAgent(
 
   const langName =
     lang === "fr"
-      ? "français"
+      ? "francais"
       : lang === "en"
         ? "anglais"
         : lang === "ar"
           ? "arabe classique"
           : "darija marocain";
 
-  const systemPrompt = `Tu es Sara, réceptionniste virtuelle du ${CLINIC_INFO}
+  const systemPrompt = `Tu es Sara, receptionniste virtuelle du ${CLINIC_INFO}
 
-MISSION: Aider le patient à prendre un rendez-vous en collectant ces infos UNE PAR UNE:
-1. Prénom et nom complet
-2. Service souhaité (propose la liste des 6 services)
-3. Date souhaitée — IMPORTANT: convertis TOUJOURS en format YYYY-MM-DD
-   Aujourd'hui = ${today}
-   Exemple: "demain" = ${tomorrow}
-4. Créneau (matin 9h-13h ou après-midi 14h-19h)
-5. Email
-6. Téléphone
+MISSION: Aider le patient a prendre un rendez-vous en collectant ces infos UNE PAR UNE:
+1. Prenom et nom complet
+2. Service souhaite (propose la liste des 6 services)
+3. Date souhaitee — Demande au patient quelle date lui convient.
+   N proposes JAMAIS une liste de dates disponibles.
+   Apres que le patient donne une date, verifie avec getAvailableSlots() si disponible.
+   Si non disponible → dis que cette date est complete et demande une autre date.
+4. Creneau (matin 9h-13h ou apres-midi 14h-19h)
+5. Telephone
 
-RÈGLES IMPORTANTES:
-- UNE question à la fois, jamais plusieurs
-- Quand le patient donne une date, vérifie les créneaux disponibles dans sessionData.availableSlots
-- Si sessionData.availableSlots est vide pour cette date → dis que la date n'est pas disponible et demande une autre
+IMPORTANT: Convertis toute date mentionnee (ex: "6 mars", "demain", "lundi") en format YYYY-MM-DD.
+Aujourd'hui = ${today}. "demain" = ${tomorrow}.
+Si la date est dans le passe → propose une date future.
+
+IMPORTANT: Email NEST PAS necessaire pour prendre un RDV. Le Dr contacte par telephone.
+Ne demande JAMAIS lemail au patient.
+
+RÈGLES:
+- UNE question a la fois, jamais plusieurs
+- Quand le patient donne une date, verifie les creneaux disponibles dans sessionData.availableSlots
+- Si sessionData.availableSlots est vide pour cette date → dis que la date nest pas disponible et demande une autre
 - Si sessionData.availableSlots contient seulement 'matin' → propose uniquement le matin
-- Ne JAMAIS proposer un créneau non disponible
-- Avant de finaliser, récapitule TOUT et demande confirmation
+- Ne JAMAIS proposer un creneau non disponible
+- Avant de finaliser, recapitule TOUT et demande confirmation
 - Sois chaleureux et rassurant (beaucoup de gens ont peur du dentiste)
-- Si le patient mentionne une urgence → priorise et collecte juste nom + téléphone d'abord
-- Réponds en ${langName}
+- Si le patient mentionne une urgence → priorise et collecte juste nom + telephone dabord
+- Reponds en ${langName}
 
-DONNÉES SESSION ACTUELLES: ${JSON.stringify(sessionData)}
+DONNEES SESSION ACTUELLES: ${JSON.stringify(sessionData)}
 
 QUAND TU AS TOUTES LES INFOS ET LA CONFIRMATION DU PATIENT:
-Réponds avec exactement ce format sur la DERNIÈRE ligne:
-READY_TO_BOOK:{"name":"...","email":"...","phone":"...","service":"general|endodontia|estetica|protesis|cirugia|laser","preferred_date":"YYYY-MM-DD","preferred_time":"matin|apres-midi","notes":"","lang":"${lang}"}`;
+Reponds avec exactement ce format sur la DERNIERE ligne:
+READY_TO_BOOK:{"name":"...","phone":"...","service":"general|endodontia|estetica|protesis|cirugia|laser","preferred_date":"YYYY-MM-DD","preferred_time":"matin|apres-midi","notes":"","lang":"${lang}"}`;
 
-  const dateMatch = message.match(/(\d{4}-\d{2}-\d{2})/);
   let updatedSessionData = { ...sessionData };
 
-  if (dateMatch) {
-    const slots = await getAvailableSlots(dateMatch[1]);
+  const extractedDate = await extractDate(message);
+  if (extractedDate) {
+    const slots = await getAvailableSlots(extractedDate);
     updatedSessionData.availableSlots = slots;
-    updatedSessionData.requestedDate = dateMatch[1];
+    updatedSessionData.requestedDate = extractedDate;
   }
 
   const response = await openai.chat.completions.create({
@@ -173,7 +208,7 @@ READY_TO_BOOK:{"name":"...","email":"...","phone":"...","service":"general|endod
         return {
           reply:
             lang === "fr"
-              ? `❌ Ce créneau n'est plus disponible. Créneaux disponibles: ${slots.join(", ") || "aucun pour cette date"}. Souhaitez-vous choisir une autre date ?`
+              ? `❌ Ce creneau nest plus disponible. Creneaux disponibles: ${slots.join(", ") || "aucun pour cette date"}. Souhaitez-vous choisir une autre date ?`
               : `❌ This slot is no longer available. Available: ${slots.join(", ") || "none for this date"}`,
           updatedSessionData,
         };
@@ -187,7 +222,7 @@ READY_TO_BOOK:{"name":"...","email":"...","phone":"...","service":"general|endod
       const cleanReply = rawReply.replace(/READY_TO_BOOK:\{.*\}/s, "").trim();
       const confirmMsg =
         lang === "fr"
-          ? `✅ Votre demande de RDV est enregistrée ! Référence: #${created.id}\nLe cabinet vous contactera sous 24h pour confirmer.`
+          ? `✅ Votre demande de RDV est enregistree ! Reference: #${created.id}\nLe cabinet vous contactera sous 24h pour confirmer.`
           : `✅ Your appointment request is registered! Reference: #${created.id}\nWe'll contact you within 24h to confirm.`;
 
       return {
@@ -211,28 +246,28 @@ async function cancelAgent(
 ): Promise<{ reply: string; updatedSessionData: any }> {
   const langName =
     lang === "fr"
-      ? "français"
+      ? "francais"
       : lang === "en"
         ? "anglais"
         : lang === "ar"
           ? "arabe"
           : "darija";
 
-  const systemPrompt = `Tu es Sara, réceptionniste du ${CLINIC_INFO}
+  const systemPrompt = `Tu es Sara, receptionniste du ${CLINIC_INFO}
 
-MISSION: Aider le patient à annuler un rendez-vous.
+MISSION: Aider le patient a annuler un rendez-vous.
 
-ÉTAPES:
-1. Si tu n'as pas encore l'email → demande l'email
+ETAPES:
+1. Si tu nas pas encore lemail → demande lemail
 2. Si sessionData.foundAppointments existe:
-   - S'il y en a plusieurs → demande lequel annuler (affiche la liste numérotée)
-   - S'il y en a un seul → demande confirmation d'annulation
-3. Si sessionData.selectedAppointmentId et patient a confirmé → indique CANCEL_CONFIRMED
+   - Sil y en a plusieurs → demande lequel annuler (affiche la liste numerotee)
+   - Sil y en a un seul → demande confirmation dannulation
+3. Si sessionData.selectedAppointmentId et patient a confirme → indique CANCEL_CONFIRMED
 
-DONNÉES SESSION: ${JSON.stringify(sessionData)}
-Réponds en ${langName}
+DONNEES SESSION: ${JSON.stringify(sessionData)}
+Repons en ${langName}
 
-Si annulation confirmée, écris sur la dernière ligne:
+Si annulation confirmee, ecris sur la derniere ligne:
 CANCEL_CONFIRMED:{"appointmentId": NUMBER}`;
 
   const emailMatch = message.match(/[\w.-]+@[\w.-]+\.\w+/);
@@ -268,7 +303,7 @@ CANCEL_CONFIRMED:{"appointmentId": NUMBER}`;
     const cleanReply = rawReply.replace(/CANCEL_CONFIRMED:\{.*\}/, "").trim();
     const msg =
       lang === "fr"
-        ? "✅ Votre rendez-vous a été annulé."
+        ? "✅ Votre rendez-vous a ete annule."
         : "✅ Your appointment has been cancelled.";
     return {
       reply: cleanReply + "\n" + msg,
@@ -288,34 +323,35 @@ async function rescheduleAgent(
   const today = new Date().toISOString().split("T")[0];
   const langName =
     lang === "fr"
-      ? "français"
+      ? "francais"
       : lang === "en"
         ? "anglais"
         : lang === "ar"
           ? "arabe"
           : "darija";
 
-  const systemPrompt = `Tu es Sara, réceptionniste du ${CLINIC_INFO}
+  const systemPrompt = `Tu es Sara, receptionniste du ${CLINIC_INFO}
 
-MISSION: Aider le patient à modifier la date de son rendez-vous.
+MISSION: Aider le patient a modifier la date de son rendez-vous.
 
-ÉTAPES:
-1. Si pas d'email → demande l'email
+ETAPES:
+1. Si pas demail → demande lemail
 2. Si sessionData.foundAppointments → affiche les RDV et demande lequel modifier
-3. Demande la nouvelle date souhaitée (format YYYY-MM-DD)
-   Aujourd'hui = ${today}
-4. Vérifie sessionData.availableSlots pour la nouvelle date
-5. Propose les créneaux disponibles
-6. Confirme le changement avec récapitulatif
+3. Demande la nouvelle date souhaitee
+4. Verifie sessionData.availableSlots pour la nouvelle date
+5. Propose les creneaux disponibles
+6. Confirme le changement avec recapitulatif
 
-DONNÉES SESSION: ${JSON.stringify(sessionData)}
-Réponds en ${langName}
+IMPORTANT: Convertis toute date en YYYY-MM-DD.
+Aujourdhui = ${today}
 
-Si modification confirmée:
+DONNEES SESSION: ${JSON.stringify(sessionData)}
+Repons en ${langName}
+
+Si modification confirmee:
 RESCHEDULE_CONFIRMED:{"appointmentId": NUMBER, "new_date": "YYYY-MM-DD", "new_time": "matin|apres-midi"}`;
 
   const emailMatch = message.match(/[\w.-]+@[\w.-]+\.\w+/);
-  const dateMatch = message.match(/(\d{4}-\d{2}-\d{2})/);
   let updatedSessionData = { ...sessionData };
 
   if (emailMatch && !sessionData.foundAppointments) {
@@ -323,10 +359,11 @@ RESCHEDULE_CONFIRMED:{"appointmentId": NUMBER, "new_date": "YYYY-MM-DD", "new_ti
     updatedSessionData.foundAppointments = found;
   }
 
-  if (dateMatch) {
-    const slots = await getAvailableSlots(dateMatch[1]);
+  const extractedDate = await extractDate(message);
+  if (extractedDate) {
+    const slots = await getAvailableSlots(extractedDate);
     updatedSessionData.availableSlots = slots;
-    updatedSessionData.newDate = dateMatch[1];
+    updatedSessionData.newDate = extractedDate;
   }
 
   const response = await openai.chat.completions.create({
@@ -355,7 +392,7 @@ RESCHEDULE_CONFIRMED:{"appointmentId": NUMBER, "new_date": "YYYY-MM-DD", "new_ti
       .trim();
     const msg =
       lang === "fr"
-        ? `✅ RDV modifié pour le ${new_date} (${new_time}).`
+        ? `✅ RDV modifie pour le ${new_date} (${new_time}).`
         : `✅ Appointment rescheduled to ${new_date} (${new_time}).`;
     return {
       reply: cleanReply + "\n" + msg,
@@ -373,7 +410,7 @@ async function infoAgent(
 ): Promise<string> {
   const langName =
     lang === "fr"
-      ? "français"
+      ? "francais"
       : lang === "en"
         ? "anglais"
         : lang === "ar"
@@ -387,10 +424,10 @@ async function infoAgent(
     messages: [
       {
         role: "system",
-        content: `Tu es Sara, réceptionniste du ${CLINIC_INFO}
-      Réponds directement et clairement aux questions sur le cabinet.
+        content: `Tu es Sara, receptionniste du ${CLINIC_INFO}
+      Reponds directement et clairement aux questions sur le cabinet.
       Ne propose des RDV que si pertinent.
-      Réponds en ${langName}`,
+      Repons en ${langName}`,
       },
       ...history,
       { role: "user", content: message },
@@ -489,20 +526,18 @@ export async function processChat(
       } as any)
       .where(eq(chatSessionsTable.id, sessionId));
   } else {
-    await db
-      .insert(chatSessionsTable)
-      .values({
-        id: sessionId,
-        messages: history,
-        lang,
-        session_data: sessionData,
-      } as any);
+    await db.insert(chatSessionsTable).values({
+      id: sessionId,
+      messages: history,
+      lang,
+      session_data: sessionData,
+    } as any);
   }
 
   return {
     reply,
     actionResult: appointmentCreated
-      ? `RDV #${appointmentCreated.id} créé`
+      ? `RDV #${appointmentCreated.id} cree`
       : undefined,
   };
 }

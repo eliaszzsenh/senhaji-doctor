@@ -5,6 +5,7 @@ import { z } from "zod/v4";
 export const chatSessionsTable = pgTable("chat_sessions", {
   id: text("id").primaryKey(),
   messages: jsonb("messages").notNull().default([]),
+  session_data: jsonb("session_data").notNull().default({}),
   lang: text("lang").notNull().default("fr"),
   created_at: timestamp("created_at", { withTimezone: true })
     .notNull()
