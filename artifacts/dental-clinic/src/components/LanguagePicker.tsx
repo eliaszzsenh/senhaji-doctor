@@ -1,6 +1,6 @@
-import { useLang } from "../i18n/useLang";
-import { type Lang } from "../i18n/translations";
 import { Globe } from "lucide-react";
+
+type Lang = "fr" | "en" | "ar" | "darija";
 
 const LANGUAGES: { code: Lang; label: string; flag: string }[] = [
   { code: "fr", label: "Français", flag: "🇫🇷" },
@@ -10,17 +10,10 @@ const LANGUAGES: { code: Lang; label: string; flag: string }[] = [
 ];
 
 interface LanguagePickerProps {
-  onClose: () => void;
+  onSelect: (lang: Lang) => void;
 }
 
-export default function LanguagePicker({ onClose }: LanguagePickerProps) {
-  const { setLang } = useLang();
-
-  const handleSelect = (lang: Lang) => {
-    setLang(lang);
-    onClose();
-  };
-
+export default function LanguagePicker({ onSelect }: LanguagePickerProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
@@ -39,7 +32,7 @@ export default function LanguagePicker({ onClose }: LanguagePickerProps) {
           {LANGUAGES.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => handleSelect(lang.code)}
+              onClick={() => onSelect(lang.code)}
               className="flex flex-col items-center justify-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all group"
             >
               <span className="text-4xl mb-3">{lang.flag}</span>
@@ -51,26 +44,5 @@ export default function LanguagePicker({ onClose }: LanguagePickerProps) {
         </div>
       </div>
     </div>
-  );
-}
-
-export function LanguageButton() {
-  const { lang, setLang, isRTL } = useLang();
-
-  const handleClick = () => {
-    const langs: Lang[] = ["fr", "en", "ar", "darija"];
-    const currentIndex = langs.indexOf(lang);
-    const nextLang = langs[(currentIndex + 1) % langs.length];
-    setLang(nextLang);
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      className={`flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors ${isRTL ? "ml-4" : "mr-4"}`}
-    >
-      <Globe className="w-4 h-4" />
-      <span className="uppercase">{lang}</span>
-    </button>
   );
 }

@@ -2,7 +2,6 @@ import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useState, useEffect } from "react";
 
 // Pages
 import Home from "./pages/Home";
@@ -22,6 +21,9 @@ import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
 import FloatingCTA from "./components/FloatingCTA";
 import LanguagePicker from "./components/LanguagePicker";
+
+// i18n
+import { LangProvider, useLang } from "./i18n/LangContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,23 +55,17 @@ function PublicRouter() {
   );
 }
 
-function App() {
-  const [showLangPicker, setShowLangPicker] = useState(false);
+function AppContent() {
+  const { lang, setLang } = useLang();
 
-  useEffect(() => {
-    const storedLang = localStorage.getItem("lang");
-    if (!storedLang) {
-      setShowLangPicker(true);
-    }
-  }, []);
+  if (!lang) {
+    return <LanguagePicker onSelect={setLang} />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          {showLangPicker && (
-            <LanguagePicker onClose={() => setShowLangPicker(false)} />
-          )}
           <Switch>
             <Route path="/admin/login" component={AdminLogin} />
             <Route path="/admin" component={AdminDashboard} />
@@ -79,6 +75,14 @@ function App() {
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
+  );
+}
+
+function App() {
+  return (
+    <LangProvider>
+      <AppContent />
+    </LangProvider>
   );
 }
 
