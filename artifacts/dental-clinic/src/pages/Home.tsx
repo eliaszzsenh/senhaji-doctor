@@ -23,19 +23,10 @@ const SERVICES = [
   { id: 6, key: "laser" },
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "M. Garcia",
-    text: "Excellent professionnel. Le traitement au laser était indolore et les résultats de mes facettes sont spectaculaires. Je le recommande largement.",
-  },
-  {
-    name: "C. Ruiz",
-    text: "J'ai voyagé depuis Valence pour mon traitement. L'attention en 5 langues et la qualité du service ont totally valu la peine.",
-  },
-  {
-    name: "A. Martinez",
-    text: "J'avais peur du dentiste, mais le Dr. Senhaji et sa technologie m'ont donné beaucoup de confiance. Une clinique de premier niveau.",
-  },
+const TESTIMONIALS_INITIALS = [
+  { name: "YB", bg: "bg-blue-500" },
+  { name: "FZ", bg: "bg-orange-500" },
+  { name: "MD", bg: "bg-green-500" },
 ];
 
 export default function Home() {
@@ -288,30 +279,46 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Témoignages
+              {t.testimonials.title}
             </h3>
             <p className="text-slate-600 max-w-2xl mx-auto">
-              Basé sur des années d'expérience et des centaines de sourires
-              transformés.
+              {t.about.description1.split(".").slice(0, 1).join("")}.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.map((t, i) => (
+            {t.testimonials.items.map((item, i) => (
               <div
                 key={i}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative"
+                className="bg-white p-8 rounded-2xl shadow-sm border-l-4 border-primary relative"
               >
-                <div className="flex text-amber-400 mb-4">
+                <span className="absolute top-4 right-4 text-6xl text-slate-200 font-serif leading-none">
+                  "
+                </span>
+                <div className="flex items-center gap-4 mb-6 relative z-10">
+                  <div
+                    className={`w-12 h-12 ${TESTIMONIALS_INITIALS[i].bg} rounded-full flex items-center justify-center text-white font-bold text-sm`}
+                  >
+                    {TESTIMONIALS_INITIALS[i].name}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900">{item.name}</p>
+                    <p className="text-sm text-slate-500">{item.location}</p>
+                  </div>
+                </div>
+                <div className="flex text-amber-400 mb-3">
                   {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="w-5 h-5 fill-current" />
+                    <Star key={j} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <p className="text-slate-700 italic mb-6">"{t.text}"</p>
-                <p className="font-bold text-slate-900">{t.name}</p>
-                <span className="text-sm text-slate-500">
-                  Patient International
-                </span>
+                <p className="text-slate-700 mb-4 relative z-10">{item.text}</p>
+                <div className="flex items-center gap-2 text-sm text-slate-500 border-t pt-4">
+                  <span className="font-medium text-primary">
+                    {item.service}
+                  </span>
+                  <span>•</span>
+                  <span>{item.date}</span>
+                </div>
               </div>
             ))}
           </div>
