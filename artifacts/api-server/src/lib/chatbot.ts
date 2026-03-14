@@ -3,6 +3,9 @@ import { db } from "@workspace/db";
 import { appointments, chatSessions } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 
+console.log("OpenAI API Key present:", !!process.env.OPENAI_API_KEY);
+console.log("OpenAI API Key length:", process.env.OPENAI_API_KEY?.length || 0);
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const SYSTEM_PROMPTS = {

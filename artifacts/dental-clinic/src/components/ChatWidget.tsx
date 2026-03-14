@@ -130,6 +130,11 @@ export default function ChatWidget() {
         }),
       });
 
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || `HTTP ${res.status}`);
+      }
+
       const data = await res.json();
       setIsTyping(false);
 
@@ -140,7 +145,8 @@ export default function ChatWidget() {
         actionResult: data.actionResult || undefined,
       };
       setMessages((prev) => [...prev, botMsg]);
-    } catch {
+    } catch (error: any) {
+      console.error("Chat fetch error:", error);
       setIsTyping(false);
       setMessages((prev) => [
         ...prev,
@@ -148,11 +154,12 @@ export default function ChatWidget() {
           id: Date.now().toString(),
           role: "bot",
           content:
-            chatLang === "fr"
+            error?.message ||
+            (chatLang === "fr"
               ? "Une erreur est survenue. Veuillez réessayer."
               : chatLang === "en"
                 ? "An error occurred. Please try again."
-                : "حدث خطأ. يرجى المحاولة مرة أخرى.",
+                : "حدث خطأ. يرجى المحاولة مرة أخرى."),
         },
       ]);
     }
