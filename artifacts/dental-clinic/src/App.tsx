@@ -20,7 +20,6 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
-import FloatingCTA from "./components/FloatingCTA";
 import WhatsAppButton from "./components/WhatsAppButton";
 import LanguagePicker from "./components/LanguagePicker";
 import CookieBanner from "./components/CookieBanner";
@@ -94,7 +93,6 @@ function PublicRouter() {
       <Footer />
       <ChatWidget />
       <WhatsAppButton />
-      <FloatingCTA />
     </div>
   );
 }
