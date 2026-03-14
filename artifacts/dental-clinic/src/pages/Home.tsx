@@ -59,7 +59,7 @@ export default function Home() {
   return (
     <main className="w-full">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-secondary">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-secondary pb-24">
         <div className="absolute inset-0 z-0">
           <img
             src={`${import.meta.env.BASE_URL}images/hero-bg.png`}
@@ -127,7 +127,7 @@ export default function Home() {
               </div>
 
               {/* Google Maps Section */}
-              <div className="mt-12 max-w-4xl mx-auto">
+              <div className="mt-12 max-w-4xl mx-auto -mb-16 relative z-10">
                 <h3 className="text-white text-xl font-semibold mb-4 text-center">
                   {lang === "fr"
                     ? "📍 Nous trouver"
@@ -135,7 +135,7 @@ export default function Home() {
                       ? "📍 Find us"
                       : "📍 موقعنا"}
                 </h3>
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.6!2d-7.6290118!3d33.5999254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7d28c0cb0d30f%3A0xd16d850db03fd491!2sCENTRE%20DENTAIRE%20SENHAJI!5e0!3m2!1sfr!2sma!4v1710000000000!5m2!1sfr!2sma"
                     width="100%"
