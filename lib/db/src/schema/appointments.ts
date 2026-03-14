@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -13,6 +13,7 @@ export const appointmentsTable = pgTable("appointments", {
   notes: text("notes"),
   status: text("status").notNull().default("pending"),
   lang: text("lang").default("fr"),
+  reminder_sent: boolean("reminder_sent").default(false),
   created_at: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

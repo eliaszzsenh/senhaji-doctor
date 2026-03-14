@@ -146,4 +146,43 @@ router.get("/admin/stats", authMiddleware, async (req, res): Promise<void> => {
   });
 });
 
+router.get(
+  "/admin/send-reminders",
+  authMiddleware,
+  async (req, res): Promise<void> => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+    const appointmentsToRemind = await db
+      .select()
+      .from(appointmentsTable)
+      .where(
+        and(
+          eq(appointmentsTable.status, "confirmed"),
+          eq(appointmentsTable.preferred_date, tomorrowStr),
+          eq(appointmentsTable.reminder_sent, false),
+        ),
+      );
+
+    const results: string[] = [];
+
+    for (const appt of appointmentsToRemind) {
+      const logMsg = `REMINDER: Envoyer email à ${appt.email} pour RDV demain ${appt.preferred_date} (${appt.preferred_time})`;
+      console.log(logMsg);
+      results.push(logMsg);
+
+      await db
+        .update(appointmentsTable)
+        .set({ reminder_sent: true })
+        .where(eq(appointmentsTable.id, appt.id));
+    }
+
+    res.json({
+      sent: results.length,
+      reminders: results,
+    });
+  },
+);
+
 export default router;
